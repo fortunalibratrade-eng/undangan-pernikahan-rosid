@@ -1169,7 +1169,7 @@ class LightTrail{
   fadeOut(cb){this.stop();let op=1;const f=()=>{op-=.06;this.canvas.style.opacity=Math.max(0,op);if(op>0)requestAnimationFrame(f);else{this.clr();this.canvas.style.opacity='1';if(cb)cb();}};requestAnimationFrame(f);}
   loop(){this.update();this.render();if(this.phase!=='idle'&&this.phase!=='done')this.rafId=requestAnimationFrame(()=>this.loop());}
   update(){
-    const cfg=this.cfg,spd=(cfg.speed||1)*.0034;
+    const cfg=this.cfg,spd=(cfg.speed||1)*.0075;
     if(this.phase==='descend'){
       this.dp=Math.min(1,this.dp+spd);
       if(cfg.events)cfg.events.forEach(ev=>{if(!ev.done&&this.dp>=ev.at){ev.done=true;ev.fn();}});
