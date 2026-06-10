@@ -24,6 +24,10 @@ body.theme-navy{--gold:#7A9EC4;--gold-light:#AACBE8;--gold-dark:#2E5A8B;--gold-p
 
 html{-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}
 body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;touch-action:manipulation}
+/* Low-perf mode: matikan efek berat di HP lemah */
+.low-perf .navIcon{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+.low-perf #settingsPanel,.low-perf [class*="Panel"]{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(5,5,5,.98)!important;}
+.low-perf #petalsWrap{display:none!important;}
 ::-webkit-scrollbar{width:2px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:1px}
 
 @keyframes shimmer{0%{background-position:-300% center}100%{background-position:300% center}}
@@ -871,6 +875,21 @@ body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text);overfl
 let db=null;
 try{firebase.initializeApp({apiKey:"AIzaSyB2YXxwJIbQjr_w8yIbl7HbNHF68TcKnP4",authDomain:"undangan-pernikahan-rosid.firebaseapp.com",projectId:"undangan-pernikahan-rosid",storageBucket:"undangan-pernikahan-rosid.firebasestorage.app",messagingSenderId:"549968254739",appId:"1:549968254739:web:8f0f150e89464b5967ace6"});db=firebase.firestore();}catch(e){console.warn(e)}
 
+/* ══════ PERFORMANCE MODE ══════
+   low  = HP jadul/RAM≤2GB/core≤2  → efek minimal, 30fps
+   mid  = HP mid-range              → efek sedang, 60fps
+   high = HP flagship               → efek penuh, 60fps
+══════════════════════════════ */
+const QUALITY=(()=>{
+  const mem=navigator.deviceMemory||4;
+  const cpu=navigator.hardwareConcurrency||4;
+  const w=window.innerWidth;
+  if(mem<=2||cpu<=2||w<360)return'low';
+  if(mem<=4||cpu<=4)return'mid';
+  return'high';
+})();
+if(QUALITY==='low')document.body.classList.add('low-perf');
+
 function clamp(min,val,max){return Math.min(max,Math.max(min,val));}
 
 /* ══════════ STARS — cover, dense, continuous ══════════ */
@@ -1167,9 +1186,9 @@ class LightTrail{
   start(cfg={}){this.stop();this.cfg=cfg;this.dp=0;this.bp=0;this.bdone=false;this.particles=[];this.phase='descend';this.canvas.style.opacity='1';this.loop();}
   stop(){if(this.rafId){cancelAnimationFrame(this.rafId);this.rafId=null;}this.phase='idle';}
   fadeOut(cb){this.stop();let op=1;const f=()=>{op-=.06;this.canvas.style.opacity=Math.max(0,op);if(op>0)requestAnimationFrame(f);else{this.clr();this.canvas.style.opacity='1';if(cb)cb();}};requestAnimationFrame(f);}
-  loop(){this.update();this.render();if(this.phase!=='idle'&&this.phase!=='done')this.rafId=requestAnimationFrame(()=>this.loop());}
+  loop(){this.update();this.render();if(this.phase!=='idle'&&this.phase!=='done'){if(QUALITY==='low'){setTimeout(()=>this.rafId=requestAnimationFrame(()=>this.loop()),33);}else this.rafId=requestAnimationFrame(()=>this.loop());}}
   update(){
-    const cfg=this.cfg,spd=(cfg.speed||1)*.0075;
+    const cfg=this.cfg,spd=(cfg.speed||1)*.0034;
     if(this.phase==='descend'){
       this.dp=Math.min(1,this.dp+spd);
       if(cfg.events)cfg.events.forEach(ev=>{if(!ev.done&&this.dp>=ev.at){ev.done=true;ev.fn();}});
@@ -1180,7 +1199,8 @@ class LightTrail{
       if(this.bp>=1&&!this.bdone){this.bdone=true;if(cfg.onBranchDone)cfg.onBranchDone(()=>{setTimeout(()=>{this.phase='descend';},150);});else this.phase='descend';}
     }
     const now=performance.now();
-    if((this.phase==='descend'||this.phase==='branch')&&now-this.lastSpike>120){
+    const spikeMs=QUALITY==='low'?200:QUALITY==='mid'?130:90;
+    if((this.phase==='descend'||this.phase==='branch')&&now-this.lastSpike>spikeMs){
       this.lastSpike=now;
       const W=this.W,top=clamp(52,W*.12,72),bot=clamp(52,W*.12,72),fBot=this.H-bot;
       const headY=top+this.dp*(fBot-top);
@@ -1189,30 +1209,25 @@ class LightTrail{
     this.particles=this.particles.filter(p=>{p.life-=p.decay;return p.life>0;});
   }
   _spikes(headY){
-    // PETIR: titik A = sisi frame kiri/kanan, menyambar ke B = ke luar horizontal
-    // Sisi KIRI (xl): petir ke KIRI (dir=-1) — keluar menjauhi frame
-    // Sisi KANAN (xr): petir ke KANAN (dir=+1) — keluar menjauhi frame
-    // BUKAN diagonal ke pojok bawah (c)
+    // PETIR: A (sisi frame) → B (ke luar horizontal), BUKAN diagonal ke c
     const W=this.W,side=clamp(14,W*.044,24),xl=side,xr=W-side;
-    const zone=10; // zona sempit di sekitar kepala cahaya
-    for(let i=0;i<4;i++){
+    const zone=10;
+    // Kurangi partikel di HP low/mid
+    const boltN=QUALITY==='low'?1:QUALITY==='mid'?2:4;
+    const sparkN=QUALITY==='low'?1:QUALITY==='mid'?2:5;
+    const ekgChance=QUALITY==='low'?.2:.55;
+    for(let i=0;i<boltN;i++){
       const ty=headY-(Math.random()*zone);
-      // KIRI: dari xl ke kiri (negatif x)
-      this.particles.push({t:'bolt_trail',x:xl,y:ty,dir:-1,life:1,decay:.07+Math.random()*.06,len:16+Math.random()*36});
-      // KANAN: dari xr ke kanan (positif x)
-      this.particles.push({t:'bolt_trail',x:xr,y:ty,dir:1,life:1,decay:.07+Math.random()*.06,len:16+Math.random()*36});
+      this.particles.push({t:'bolt_trail',x:xl,y:ty,dir:-1,life:1,decay:.09+Math.random()*.07,len:16+Math.random()*32});
+      this.particles.push({t:'bolt_trail',x:xr,y:ty,dir:1,life:1,decay:.09+Math.random()*.07,len:16+Math.random()*32});
     }
-    // Spark keluar horizontal dari masing-masing sisi
-    for(let i=0;i<5;i++){
+    for(let i=0;i<sparkN;i++){
       const ty=headY-(Math.random()*zone*1.4);
-      // Kiri spark ke kiri
-      this.particles.push({t:'dot',x:xl,y:ty,vx:-(1.2+Math.random()*3.5),vy:(-0.4+Math.random()*.8),life:1,decay:.06+Math.random()*.07,r:.6+Math.random()*1.7});
-      // Kanan spark ke kanan
-      this.particles.push({t:'dot',x:xr,y:ty,vx:(1.2+Math.random()*3.5),vy:(-0.4+Math.random()*.8),life:1,decay:.06+Math.random()*.07,r:.6+Math.random()*1.7});
+      this.particles.push({t:'dot',x:xl,y:ty,vx:-(1.2+Math.random()*3.5),vy:(-0.4+Math.random()*.8),life:1,decay:.08+Math.random()*.08,r:.6+Math.random()*1.7});
+      this.particles.push({t:'dot',x:xr,y:ty,vx:(1.2+Math.random()*3.5),vy:(-0.4+Math.random()*.8),life:1,decay:.08+Math.random()*.08,r:.6+Math.random()*1.7});
     }
-    // EKG ke luar dari masing-masing sisi
-    if(Math.random()<.55)this.particles.push({t:'ekg_v',x:xl,y:headY-(Math.random()*zone*.5),dir:-1,life:1,decay:.04,scale:1+Math.random()*.5});
-    if(Math.random()<.55)this.particles.push({t:'ekg_v',x:xr,y:headY-(Math.random()*zone*.5),dir:1,life:1,decay:.04,scale:1+Math.random()*.5});
+    if(Math.random()<ekgChance)this.particles.push({t:'ekg_v',x:xl,y:headY-(Math.random()*zone*.5),dir:-1,life:1,decay:.05,scale:1+Math.random()*.5});
+    if(Math.random()<ekgChance)this.particles.push({t:'ekg_v',x:xr,y:headY-(Math.random()*zone*.5),dir:1,life:1,decay:.05,scale:1+Math.random()*.5});
   }
   render(){
     const{ctx,W,H}=this;this.clr();const dp=this.dp;
@@ -1320,7 +1335,7 @@ function buildNav(ai){
   // Sudut 200°→340° melewati 270° = BUSUR ATAS yang benar ✓
   // ──────────────────────────────────────────────────────────────
   const R=Math.min(VW*.44,168);
-  const startDeg=160,endDeg=20;
+  const startDeg=200,endDeg=340;
   SCENE_DEFS.forEach((s,i)=>{
     const el=document.createElement('div');
     el.className='navItem'+(i===ai?' act':'');
@@ -1328,7 +1343,7 @@ function buildNav(ai){
     const frac=N>1?i/(N-1):0.5;
     const rad=(startDeg+frac*(endDeg-startDeg))*Math.PI/180;
     const cx=Math.cos(rad)*R; // negatif=kiri, positif=kanan
-    const cy=-(Math.sin(rad)*R); // NEGATIF=ke atas (inilah yang benar!)
+    const cy=Math.sin(rad)*R; // NEGATIF=ke atas (inilah yang benar!)
     el.style.left=(cx+27)+'px';
     el.style.top=(cy+27)+'px';
     el.addEventListener('click',()=>{
@@ -1416,8 +1431,8 @@ class SceneManager{
 }
 
 /* PETALS */
-function createPetals(n=26){const w=document.getElementById('petalsWrap');w.innerHTML='';const cnt=window.innerWidth<640?Math.floor(n*.6):n;for(let i=0;i<cnt;i++){const p=document.createElement('div');p.className='petal';p.style.left=Math.random()*100+'vw';p.style.animationDuration=(20+Math.random()*28)+'s';p.style.animationDelay=(Math.random()*18)+'s';const sz=3+Math.random()*7;p.style.width=sz+'px';p.style.height=sz+'px';p.style.background=`rgba(201,169,110,${.045+Math.random()*.14})`;w.appendChild(p);}createLeaves(20);}
-function createLeaves(n=20){const w=document.getElementById('petalsWrap');const cnt=window.innerWidth<640?Math.floor(n*.7):n;for(let i=0;i<cnt;i++){const l=document.createElement('div');l.className='leaf';l.style.left=(Math.random()*110-5)+'vw';l.style.animationDuration=(16+Math.random()*20)+'s';l.style.animationDelay=(Math.random()*22)+'s';const sz=7+Math.random()*9;l.style.width=sz+'px';l.style.height=(sz*.55)+'px';const r=Math.random();const col=r<.35?`rgba(110,170,70,${.22+Math.random()*.2})`:r<.65?`rgba(170,130,50,${.2+Math.random()*.2})`:`rgba(190,100,45,${.2+Math.random()*.18})`;l.style.background=col;l.style.borderRadius=`${48+Math.random()*18}% ${8+Math.random()*12}% ${48+Math.random()*18}% ${8+Math.random()*12}%`;l.style.transform='rotate('+(Math.random()*360)+'deg)';w.appendChild(l);}}
+function createPetals(n=QUALITY==='low'?8:QUALITY==='mid'?16:26){const w=document.getElementById('petalsWrap');w.innerHTML='';const cnt=window.innerWidth<640?Math.floor(n*.6):n;for(let i=0;i<cnt;i++){const p=document.createElement('div');p.className='petal';p.style.left=Math.random()*100+'vw';p.style.animationDuration=(20+Math.random()*28)+'s';p.style.animationDelay=(Math.random()*18)+'s';const sz=3+Math.random()*7;p.style.width=sz+'px';p.style.height=sz+'px';p.style.background=`rgba(201,169,110,${.045+Math.random()*.14})`;w.appendChild(p);}if(QUALITY!=='low')createLeaves();}
+function createLeaves(n=QUALITY==='low'?0:QUALITY==='mid'?8:20){const w=document.getElementById('petalsWrap');const cnt=window.innerWidth<640?Math.floor(n*.7):n;for(let i=0;i<cnt;i++){const l=document.createElement('div');l.className='leaf';l.style.left=(Math.random()*110-5)+'vw';l.style.animationDuration=(16+Math.random()*20)+'s';l.style.animationDelay=(Math.random()*22)+'s';const sz=7+Math.random()*9;l.style.width=sz+'px';l.style.height=(sz*.55)+'px';const r=Math.random();const col=r<.35?`rgba(110,170,70,${.22+Math.random()*.2})`:r<.65?`rgba(170,130,50,${.2+Math.random()*.2})`:`rgba(190,100,45,${.2+Math.random()*.18})`;l.style.background=col;l.style.borderRadius=`${48+Math.random()*18}% ${8+Math.random()*12}% ${48+Math.random()*18}% ${8+Math.random()*12}%`;l.style.transform='rotate('+(Math.random()*360)+'deg)';w.appendChild(l);}}
 function handlePetals(on){document.getElementById('petalsWrap').style.display=on?'block':'none';}
 
 /* COUNTDOWN */
