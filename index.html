@@ -1437,7 +1437,7 @@ function handlePetals(on){document.getElementById('petalsWrap').style.display=on
 
 /* COUNTDOWN */
 let cdStarted=false;
-function startCountdown(){if(cdStarted)return;cdStarted=true;const target=new Date('2026-06-17T08:00:00+07:00').getTime();function tick(){const d=target-Date.now();if(d<=0){['Days','Hours','Mins','Secs'].forEach(k=>document.getElementById('cd'+k).textContent='00');return;}const pad=n=>String(n).padStart(2,'0');document.getElementById('cdDays').textContent=pad(Math.floor(d/864e5));document.getElementById('cdHours').textContent=pad(Math.floor((d%864e5)/36e5));document.getElementById('cdMins').textContent=pad(Math.floor((d%36e5)/6e4));document.getElementById('cdSecs').textContent=pad(Math.floor((d%6e4)/1e3));}tick();setInterval(tick,1000);}
+function startCountdown(){if(cdStarted)return;cdStarted=true;const target=new Date('2026-06-27T08:00:00+07:00').getTime();function tick(){const d=target-Date.now();if(d<=0){['Days','Hours','Mins','Secs'].forEach(k=>document.getElementById('cd'+k).textContent='00');return;}const pad=n=>String(n).padStart(2,'0');document.getElementById('cdDays').textContent=pad(Math.floor(d/864e5));document.getElementById('cdHours').textContent=pad(Math.floor((d%864e5)/36e5));document.getElementById('cdMins').textContent=pad(Math.floor((d%36e5)/6e4));document.getElementById('cdSecs').textContent=pad(Math.floor((d%6e4)/1e3));}tick();setInterval(tick,1000);}
 
 /* AUDIO */
 const SONGS=[{title:"Memories – One Piece Orchestra",sub:"BGM Default",file:"momories_onepiece_orchestra.mp3"},{title:"Gunslinger – Avenged Sevenfold",sub:"A7X",file:"Avenged Sevenfold - Gunslinger.mp3"}];
