@@ -313,14 +313,22 @@ body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text);overfl
 
 /* S6 GIFT */
 #s6{justify-content:center;text-align:center}
-.giftBox{max-width:240px;margin:14px auto 0;border:1px solid var(--gold-border);border-radius:2px;background:var(--gold-pale);padding:clamp(14px,4vw,22px);text-align:center}
-.giftQR{width:100%;max-width:148px;border-radius:2px;border:1px solid var(--gold-border);display:block;margin:0 auto 10px;filter:grayscale(10%) brightness(.94)}
+.giftBox{max-width:280px;margin:14px auto 0;border:1px solid var(--gold-border);border-radius:2px;background:var(--gold-pale);padding:clamp(16px,4.5vw,24px);text-align:center;position:relative;overflow:hidden}
+.giftBox::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.5}
+.giftBankLogo{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:5px 14px;border:1px solid var(--gold-border);border-radius:100px;margin-bottom:14px;background:rgba(5,5,5,.3)}
+.giftBankLogo span{font-family:'Jost',sans-serif;font-weight:500;font-size:11px;letter-spacing:.16em;color:var(--gold)}
 .giftLbl{font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
-.giftName{font-family:'Cormorant Garamond',serif;font-size:13.5px;color:var(--text);margin-bottom:10px}
+.giftName{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--text);margin-bottom:14px}
+.giftNumWrap{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--gold-border);border-radius:3px;padding:10px 12px;background:rgba(5,5,5,.32);margin-bottom:14px}
+.giftNum{font-family:'Cormorant Garamond',serif;font-size:clamp(18px,5vw,23px);letter-spacing:.06em;color:var(--gold-light);font-weight:500}
+.giftCopyBtn{width:26px;height:26px;border-radius:50%;border:1px solid var(--gold-border);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gold);flex-shrink:0;transition:background .25s,transform .15s;-webkit-tap-highlight-color:transparent}
+.giftCopyBtn svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.giftCopyBtn:active{transform:scale(.88)}
+.giftCopyBtn.copied{background:var(--gold);color:#07050A;border-color:var(--gold)}
 .btnDl{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border:1px solid var(--gold-border);border-radius:100px;color:var(--gold);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;background:transparent;cursor:pointer;text-decoration:none;transition:background .3s,color .3s;-webkit-tap-highlight-color:transparent}
 .btnDl:active{background:var(--gold);color:#07050A}
 .btnDl svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.giftNote{font-size:10.5px;color:var(--muted);text-align:center;margin-top:12px;max-width:240px;margin-left:auto;margin-right:auto;line-height:1.8}
+.giftNote{font-size:10.5px;color:var(--muted);text-align:center;margin-top:12px;max-width:260px;margin-left:auto;margin-right:auto;line-height:1.8}
 
 /* S7 RSVP */
 #s7{justify-content:flex-start}
@@ -776,14 +784,21 @@ body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text);overfl
     <div class="ci" id="s6h">
       <span class="sLbl">Hadiah</span><h2 class="sTitle">Amplop Digital</h2>
       <div class="div"><span class="div-icon">◆</span></div>
-      <p style="font-size:10.5px;color:var(--muted);max-width:250px;margin:0 auto;line-height:1.85">Doa restu Anda adalah anugerah terindah bagi kami. Jika berkenan memberikan hadiah, berikut QRIS kami.</p>
+      <p style="font-size:10.5px;color:var(--muted);max-width:250px;margin:0 auto;line-height:1.85">Doa restu Anda adalah anugerah terindah bagi kami. Jika berkenan memberikan hadiah, berikut rekening kami.</p>
     </div>
     <div class="giftBox ci" id="s6b">
-      <p class="giftLbl">QRIS</p><p class="giftName">Muhammad Rosid &amp; Ana</p>
-      <img src="Qrish.jpeg" alt="QRIS" class="giftQR">
-      <a href="Qrish.jpeg" download="QRIS-Ana-Rosid.jpeg" class="btnDl"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Download QRIS</a>
+      <div class="giftBankLogo"><span>BNI</span></div>
+      <p class="giftLbl">Nomor Rekening</p>
+      <div class="giftNumWrap">
+        <span class="giftNum" id="bniNum">2030215291</span>
+        <button class="giftCopyBtn" id="bniCopyBtn" onclick="copyBniNumber()" title="Salin nomor rekening">
+          <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        </button>
+      </div>
+      <p class="giftLbl">Atas Nama</p>
+      <p class="giftName">Muhammad Rosid</p>
     </div>
-    <p class="giftNote ci" id="s6n">Scan QRIS dengan aplikasi dompet digital atau mobile banking. 💛</p>
+    <p class="giftNote ci" id="s6n">Ketuk ikon salin untuk menyalin nomor rekening. 💛</p>
   </div>
 </div>
 
@@ -1465,6 +1480,21 @@ function closeLbox(){document.getElementById('lbox').classList.remove('open');}
 /* TOAST */
 let toastT=null;
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2800);}
+
+/* GIFT — copy bank account number */
+function copyBniNumber(){
+  const num=document.getElementById('bniNum').textContent.trim();
+  const btn=document.getElementById('bniCopyBtn');
+  const done=()=>{btn.classList.add('copied');btn.innerHTML='<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>';showToast('Nomor rekening disalin 💛');setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML='<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';},1800);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(num).then(done).catch(()=>fallbackCopy(num,done));
+  }else{fallbackCopy(num,done);}
+}
+function fallbackCopy(text,cb){
+  const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');cb();}catch(e){showToast('Gagal menyalin, salin manual: '+text);}
+  document.body.removeChild(ta);
+}
 
 /* RSVP */
 function submitRSVP(e){e.preventDefault();const name=document.getElementById('rsvpName').value.trim(),att=document.getElementById('rsvpAttend').value,gst=+document.getElementById('rsvpGuests').value,msg=document.getElementById('rsvpMsg').value.trim();if(!name||!att)return;const btn=document.getElementById('subBtn');btn.disabled=true;btn.textContent='Mengirim...';if(db){db.collection('rsvp').add({name,attendance:att,guests:gst,message:msg,timestamp:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{showToast('Terima kasih! 💛');document.getElementById('rsvpForm').reset();loadWishes();}).catch(()=>showToast('Gagal, coba lagi.')).finally(()=>{btn.disabled=false;btn.textContent='Kirim Konfirmasi';});}else{showToast('Database tidak tersedia');btn.disabled=false;btn.textContent='Kirim Konfirmasi';}}
