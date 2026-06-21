@@ -46,6 +46,7 @@ body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text);overfl
 @keyframes cdPulse{0%,100%{box-shadow:0 0 0 0 rgba(201,169,110,.5)}70%{box-shadow:0 0 0 14px rgba(201,169,110,0)}}
 @keyframes menuItemIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes goldGlow{0%,100%{opacity:.85}50%{opacity:1;filter:drop-shadow(0 0 12px rgba(201,169,110,.4))}}
+@keyframes mapsPulse{0%,100%{box-shadow:0 0 0 0 rgba(201,169,110,.45)}50%{box-shadow:0 0 0 8px rgba(201,169,110,0)}}
 
 /* ══════════════════════════════
    BORDER CANVAS — full-screen ornamental frame
@@ -282,14 +283,17 @@ body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text);overfl
 .evIco svg{width:8px;height:8px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .evInfo{font-size:clamp(8.5px,2vw,10.5px);color:var(--muted);line-height:1.6}
 .evInfo strong{color:var(--text);font-weight:400;display:block;margin-bottom:1px}
-.mapsBtn{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-border);padding:4px 10px;border-radius:100px;text-decoration:none;transition:background .3s,color .3s;-webkit-tap-highlight-color:transparent}
-.mapsBtn:active{background:var(--gold);color:#07050A}
+.mapsBtn{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#07050A;background:linear-gradient(135deg,var(--gold-dark),var(--gold),var(--gold-light));background-size:200% 200%;animation:gradShift 3s ease infinite,mapsPulse 2.4s ease-in-out infinite;padding:9px 18px;border-radius:100px;text-decoration:none;transition:transform .15s;-webkit-tap-highlight-color:transparent;box-shadow:0 4px 16px rgba(201,169,110,.35);}
+.mapsBtn:active{transform:scale(.95)}
+.mapsBtn svg{width:13px;height:13px}
 .mapEmbed{width:100%;max-width:560px;margin:5px auto 0}
-.mapWrap{border:1px solid var(--gold-border);border-radius:2px;overflow:hidden;position:relative}
-.mapWrap iframe{display:block;width:100%;height:clamp(110px,28vw,150px);filter:grayscale(65%) brightness(.38) contrast(1.1)}
+.mapWrap{border:1px solid var(--gold-border);border-radius:2px;overflow:hidden;position:relative;cursor:pointer}
+.mapWrap iframe{display:block;width:100%;height:clamp(110px,28vw,150px);filter:grayscale(65%) brightness(.38) contrast(1.1);pointer-events:none}
 .mapOvr{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,var(--bg),rgba(5,5,5,.72) 65%,transparent);padding:8px 10px 6px}
 .mapOvr p{font-size:9px;color:var(--muted);line-height:1.5}
 .mapOvr strong{color:var(--text);font-size:10px;display:block;margin-bottom:1px}
+.mapTapBadge{position:absolute;top:8px;right:8px;display:flex;align-items:center;gap:4px;background:rgba(5,5,5,.82);border:1px solid var(--gold-border);border-radius:100px;padding:4px 10px;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+.mapTapBadge svg{width:9px;height:9px;stroke:var(--gold);fill:none;stroke-width:1.6}
 
 /* S4 COUNTDOWN */
 #s4{justify-content:center}
@@ -736,11 +740,12 @@ body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text);overfl
       <span class="evTag">Resepsi</span><h3 class="evTitle">Walimatul Ursy</h3>
       <div class="evDet"><div class="evIco"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div><div class="evInfo"><strong>Sabtu, 27 Juni 2026</strong>13:00 – 19:00 WIB</div></div>
       <div class="evDet"><div class="evIco"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div><div class="evInfo"><strong>Kediaman Mempelai Pria</strong>Jln. Arani RT 13/RW 07<br>Mempawah, Kalbar</div></div>
-      <a href="https://maps.app.goo.gl/UmxCd4EBgUhFp3kq8?g_st=ac" target="_blank" class="mapsBtn"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>Buka Maps</a>
+      <a href="https://maps.app.goo.gl/UmxCd4EBgUhFp3kq8?g_st=ac" target="_blank" rel="noopener" class="mapsBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>Buka Lokasi di Maps</a>
     </div>
     <div class="mapEmbed ci" id="s3m">
-      <div class="mapWrap">
+      <div class="mapWrap" onclick="window.open('https://maps.app.goo.gl/UmxCd4EBgUhFp3kq8?g_st=ac','_blank')">
         <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=109.1258%2C-0.3844%2C109.1458%2C-0.3644&layer=mapnik&marker=-0.3744%2C109.1358" width="100%" height="140" style="border:0" loading="lazy" allowfullscreen></iframe>
+        <div class="mapTapBadge"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>Ketuk</div>
         <div class="mapOvr"><strong>Lokasi Resepsi</strong><p>Jln. Arani RT 13/RW 07 · Mempawah</p></div>
       </div>
     </div>
@@ -752,7 +757,7 @@ body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text);overfl
     <div class="ci" id="s4h">
       <span class="sLbl">Menghitung Hari</span><h2 class="sTitle">Hitung Mundur</h2>
       <div class="div"><span class="div-icon">◆</span></div>
-      <p style="font-size:9.5px;color:var(--muted)">Menuju Akad Nikah · 17 Juni 2026</p>
+      <p style="font-size:9.5px;color:var(--muted)">Menuju Resepsi · 27 Juni 2026</p>
       <div class="cdDot" id="cdDot"></div>
     </div>
     <div class="cdWrap ci" id="s4c">
@@ -1450,9 +1455,9 @@ function createPetals(n=QUALITY==='low'?8:QUALITY==='mid'?16:26){const w=documen
 function createLeaves(n=QUALITY==='low'?0:QUALITY==='mid'?8:20){const w=document.getElementById('petalsWrap');const cnt=window.innerWidth<640?Math.floor(n*.7):n;for(let i=0;i<cnt;i++){const l=document.createElement('div');l.className='leaf';l.style.left=(Math.random()*110-5)+'vw';l.style.animationDuration=(16+Math.random()*20)+'s';l.style.animationDelay=(Math.random()*22)+'s';const sz=7+Math.random()*9;l.style.width=sz+'px';l.style.height=(sz*.55)+'px';const r=Math.random();const col=r<.35?`rgba(110,170,70,${.22+Math.random()*.2})`:r<.65?`rgba(170,130,50,${.2+Math.random()*.2})`:`rgba(190,100,45,${.2+Math.random()*.18})`;l.style.background=col;l.style.borderRadius=`${48+Math.random()*18}% ${8+Math.random()*12}% ${48+Math.random()*18}% ${8+Math.random()*12}%`;l.style.transform='rotate('+(Math.random()*360)+'deg)';w.appendChild(l);}}
 function handlePetals(on){document.getElementById('petalsWrap').style.display=on?'block':'none';}
 
-/* COUNTDOWN */
+/* COUNTDOWN — menuju RESEPSI (27 Juni 2026, 13:00 WIB) */
 let cdStarted=false;
-function startCountdown(){if(cdStarted)return;cdStarted=true;const target=new Date('2026-06-17T08:00:00+07:00').getTime();function tick(){const d=target-Date.now();if(d<=0){['Days','Hours','Mins','Secs'].forEach(k=>document.getElementById('cd'+k).textContent='00');return;}const pad=n=>String(n).padStart(2,'0');document.getElementById('cdDays').textContent=pad(Math.floor(d/864e5));document.getElementById('cdHours').textContent=pad(Math.floor((d%864e5)/36e5));document.getElementById('cdMins').textContent=pad(Math.floor((d%36e5)/6e4));document.getElementById('cdSecs').textContent=pad(Math.floor((d%6e4)/1e3));}tick();setInterval(tick,1000);}
+function startCountdown(){if(cdStarted)return;cdStarted=true;const target=new Date('2026-06-27T13:00:00+07:00').getTime();function tick(){const d=target-Date.now();if(d<=0){['Days','Hours','Mins','Secs'].forEach(k=>document.getElementById('cd'+k).textContent='00');return;}const pad=n=>String(n).padStart(2,'0');document.getElementById('cdDays').textContent=pad(Math.floor(d/864e5));document.getElementById('cdHours').textContent=pad(Math.floor((d%864e5)/36e5));document.getElementById('cdMins').textContent=pad(Math.floor((d%36e5)/6e4));document.getElementById('cdSecs').textContent=pad(Math.floor((d%6e4)/1e3));}tick();setInterval(tick,1000);}
 
 /* AUDIO */
 const SONGS=[{title:"Memories – One Piece Orchestra",sub:"BGM Default",file:"momories_onepiece_orchestra.mp3"},{title:"Gunslinger – Avenged Sevenfold",sub:"A7X",file:"Avenged Sevenfold - Gunslinger.mp3"}];
