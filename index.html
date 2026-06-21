@@ -732,7 +732,7 @@ body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text);overfl
     </div>
     <div class="mapEmbed ci" id="s3m">
       <div class="mapWrap">
-        <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyB2YXxwJIbQjr_w8yIbl7HbNHF68TcKnP4&q=KUA+Mempawah,Kalimantan+Barat,Indonesia&zoom=15" width="100%" height="140" style="border:0" loading="lazy" allowfullscreen></iframe>
+        <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=109.1258%2C-0.3844%2C109.1458%2C-0.3644&layer=mapnik&marker=-0.3744%2C109.1358" width="100%" height="140" style="border:0" loading="lazy" allowfullscreen></iframe>
         <div class="mapOvr"><strong>Lokasi Resepsi</strong><p>Jln. Arani RT 13/RW 07 · Mempawah</p></div>
       </div>
     </div>
@@ -744,7 +744,7 @@ body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text);overfl
     <div class="ci" id="s4h">
       <span class="sLbl">Menghitung Hari</span><h2 class="sTitle">Hitung Mundur</h2>
       <div class="div"><span class="div-icon">◆</span></div>
-      <p style="font-size:9.5px;color:var(--muted)">Menuju Resepsi · 27 Juni 2026</p>
+      <p style="font-size:9.5px;color:var(--muted)">Menuju Akad Nikah · 17 Juni 2026</p>
       <div class="cdDot" id="cdDot"></div>
     </div>
     <div class="cdWrap ci" id="s4c">
@@ -1188,7 +1188,7 @@ class LightTrail{
   fadeOut(cb){this.stop();let op=1;const f=()=>{op-=.06;this.canvas.style.opacity=Math.max(0,op);if(op>0)requestAnimationFrame(f);else{this.clr();this.canvas.style.opacity='1';if(cb)cb();}};requestAnimationFrame(f);}
   loop(){this.update();this.render();if(this.phase!=='idle'&&this.phase!=='done'){if(QUALITY==='low'){setTimeout(()=>this.rafId=requestAnimationFrame(()=>this.loop()),33);}else this.rafId=requestAnimationFrame(()=>this.loop());}}
   update(){
-    const cfg=this.cfg,spd=(cfg.speed||1)*.0034;
+    const cfg=this.cfg,spd=(cfg.speed||1)*.0074;
     if(this.phase==='descend'){
       this.dp=Math.min(1,this.dp+spd);
       if(cfg.events)cfg.events.forEach(ev=>{if(!ev.done&&this.dp>=ev.at){ev.done=true;ev.fn();}});
@@ -1437,7 +1437,7 @@ function handlePetals(on){document.getElementById('petalsWrap').style.display=on
 
 /* COUNTDOWN */
 let cdStarted=false;
-function startCountdown(){if(cdStarted)return;cdStarted=true;const target=new Date('2026-06-27T08:00:00+07:00').getTime();function tick(){const d=target-Date.now();if(d<=0){['Days','Hours','Mins','Secs'].forEach(k=>document.getElementById('cd'+k).textContent='00');return;}const pad=n=>String(n).padStart(2,'0');document.getElementById('cdDays').textContent=pad(Math.floor(d/864e5));document.getElementById('cdHours').textContent=pad(Math.floor((d%864e5)/36e5));document.getElementById('cdMins').textContent=pad(Math.floor((d%36e5)/6e4));document.getElementById('cdSecs').textContent=pad(Math.floor((d%6e4)/1e3));}tick();setInterval(tick,1000);}
+function startCountdown(){if(cdStarted)return;cdStarted=true;const target=new Date('2026-06-17T08:00:00+07:00').getTime();function tick(){const d=target-Date.now();if(d<=0){['Days','Hours','Mins','Secs'].forEach(k=>document.getElementById('cd'+k).textContent='00');return;}const pad=n=>String(n).padStart(2,'0');document.getElementById('cdDays').textContent=pad(Math.floor(d/864e5));document.getElementById('cdHours').textContent=pad(Math.floor((d%864e5)/36e5));document.getElementById('cdMins').textContent=pad(Math.floor((d%36e5)/6e4));document.getElementById('cdSecs').textContent=pad(Math.floor((d%6e4)/1e3));}tick();setInterval(tick,1000);}
 
 /* AUDIO */
 const SONGS=[{title:"Memories – One Piece Orchestra",sub:"BGM Default",file:"momories_onepiece_orchestra.mp3"},{title:"Gunslinger – Avenged Sevenfold",sub:"A7X",file:"Avenged Sevenfold - Gunslinger.mp3"}];
